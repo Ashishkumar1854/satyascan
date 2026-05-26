@@ -7,7 +7,7 @@ import HistoryPage from './pages/HistoryPage';
 
 function Layout() {
   return (
-    <div className="flex h-screen bg-[#F5F5F3] dark:bg-[#0F0F0F] font-sans">
+    <div className="flex h-screen bg-[#F5F5F3] dark:bg-[#0F0F0F]">
       <Sidebar />
       <main className="flex-1 overflow-y-auto">
         <Outlet />
