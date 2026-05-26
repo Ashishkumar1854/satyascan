@@ -1,0 +1,21 @@
+# Node
+node_modules/
+.env
+
+# Python
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# React/Vite
+dist/
+dist-ssr/
+*.local
+
+# macOS
+.DS_Store
+
+# Exclude specific docs
+ANTIGRAVITY_PROMPTS (1).md
+docs/IMPLEMENTATION_PLAN.md
