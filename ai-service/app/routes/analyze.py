@@ -2,7 +2,7 @@ import requests
 from fastapi import APIRouter
 from pydantic import BaseModel
 from typing import Optional
-from app.services.pdf_extractor import extract_text
+from app.services.pdf_extractor import extract_text_from_bytes
 from app.services.claim_extractor import extract_claims
 from app.services.verifier import verify_claim
 
@@ -35,7 +35,7 @@ def analyze(request: AnalyzeRequest):
         notify_progress(cb, "parsing")
         
         pdf_bytes = base64.b64decode(request.fileData)
-        text = extract_text(pdf_bytes)
+        text = extract_text_from_bytes(pdf_bytes)
         print(f"Analyze: extracted text length {len(text)}")
         
         notify_progress(cb, "extracting")

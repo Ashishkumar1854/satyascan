@@ -17,7 +17,7 @@ def extract_claims(text: str) -> list:
         Text: {text[:3000]}"""
         
         response = client.models.generate_content(
-            model="gemini-1.5-flash",
+            model="gemini-2.0-flash",
             contents=prompt
         )
         

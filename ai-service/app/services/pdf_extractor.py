@@ -1,8 +1,8 @@
 import fitz
 
-def extract_text(file_data: bytes) -> str:
+def extract_text_from_bytes(pdf_bytes: bytes) -> str:
     try:
-        doc = fitz.open(stream=file_data, filetype="pdf")
+        doc = fitz.open(stream=pdf_bytes, filetype="pdf")
         text = ""
         for page in doc:
             text += page.get_text()
