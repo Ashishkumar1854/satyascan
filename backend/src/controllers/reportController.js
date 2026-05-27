@@ -1,7 +1,11 @@
 const Report = require('../models/Report');
+const mongoose = require('mongoose');
 
 exports.getReport = async (req, res) => {
   try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(404).json({ error: 'Report not found' });
+    }
     const report = await Report.findById(req.params.id);
     if (!report) {
       return res.status(404).json({ error: 'Report not found' });
@@ -29,18 +33,44 @@ exports.getReport = async (req, res) => {
 
 exports.getStatus = async (req, res) => {
   try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(404).json({ error: 'Report not found' });
+    }
     const report = await Report.findById(req.params.id, 'status currentStep searchProgress');
     if (!report) {
       return res.status(404).json({ error: 'Report not found' });
     }
-    res.json({
+    const response = {
       status: report.status,
       currentStep: report.currentStep,
-      progress: report.searchProgress
-    });
+    };
+    if (report.status === 'processing' && report.currentStep === 'searching') {
+      response.progress = report.searchProgress;
+    } else {
+      response.progress = report.searchProgress; // Keep for safety if frontend expects it
+    }
+    res.json(response);
   } catch (error) {
     console.error('getStatus error:', error);
     res.status(500).json({ error: 'Server error fetching status' });
+  }
+};
+
+exports.updateStatus = async (req, res) => {
+  try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(404).json({ error: 'Report not found' });
+    }
+    const { step, progress } = req.body;
+    const updateData = { currentStep: step };
+    if (progress) {
+      updateData.searchProgress = progress;
+    }
+    await Report.findByIdAndUpdate(req.params.id, updateData);
+    res.json({ success: true });
+  } catch (error) {
+    console.error('updateStatus error:', error);
+    res.status(500).json({ error: 'Server error updating status' });
   }
 };
 

@@ -1,5 +1,7 @@
+import requests
 from fastapi import APIRouter
 from pydantic import BaseModel
+from typing import Optional
 from app.services.pdf_extractor import extract_text
 from app.services.claim_extractor import extract_claims
 from app.services.verifier import verify_claim
@@ -8,33 +10,43 @@ router = APIRouter()
 
 class AnalyzeRequest(BaseModel):
     filePath: str
-    reportId: str = None
+    reportId: Optional[str] = None
+    callback_url: Optional[str] = None
+
+def notify_progress(url: str, step: str, progress: dict = None):
+    if not url:
+        return
+    try:
+        payload = {"step": step}
+        if progress:
+            payload["progress"] = progress
+        requests.post(url, json=payload, timeout=5)
+    except Exception as e:
+        print(f"Callback failed: {e}")
 
 @router.post("/analyze")
 def analyze(request: AnalyzeRequest):
     try:
+        cb = request.callback_url
+        
+        notify_progress(cb, "parsing")
         text = extract_text(request.filePath)
+        
+        notify_progress(cb, "extracting")
         claims_list = extract_claims(text)
         
         verified_claims = []
-        verified_count = 0
-        inaccurate_count = 0
-        false_count = 0
+        total = len(claims_list)
         
-        for item in claims_list:
+        notify_progress(cb, "searching", {"done": 0, "total": total})
+        
+        for i, item in enumerate(claims_list):
             claim_text = item.get("claim")
             if not claim_text:
                 continue
                 
             verification_result = verify_claim(claim_text)
             status = verification_result.get("status", "FALSE")
-            
-            if status == "VERIFIED":
-                verified_count += 1
-            elif status == "INACCURATE":
-                inaccurate_count += 1
-            else:
-                false_count += 1
                 
             claim_obj = {
                 "claim": claim_text,
@@ -46,20 +58,11 @@ def analyze(request: AnalyzeRequest):
             }
             verified_claims.append(claim_obj)
             
-        total = verified_count + inaccurate_count + false_count
-        
-        trust_score = 0
-        if total > 0:
-            trust_score = int(((verified_count + (inaccurate_count * 0.5)) / total) * 100)
+            notify_progress(cb, "searching", {"done": i + 1, "total": total})
+            
+        notify_progress(cb, "verifying")
             
         return {
-            "trustScore": trust_score,
-            "summary": {
-                "verified": verified_count,
-                "inaccurate": inaccurate_count,
-                "false": false_count,
-                "total": total
-            },
             "claims": verified_claims
         }
     except Exception as e:

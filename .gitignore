@@ -19,3 +19,7 @@ dist-ssr/
 # Exclude specific docs
 ANTIGRAVITY_PROMPTS (1).md
 docs/IMPLEMENTATION_PLAN.md
+
+# Uploads
+backend/uploads/
+

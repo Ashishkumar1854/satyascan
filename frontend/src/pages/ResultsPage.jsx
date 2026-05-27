@@ -1,64 +1,97 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Download, ArrowLeft } from 'lucide-react';
 import MetricCard from '../components/MetricCard';
 import TrustScoreRing from '../components/TrustScoreRing';
 import ClaimRow from '../components/ClaimRow';
 import { downloadJSON } from '../utils/export';
-
-const MOCK_REPORT = {
-  id: "mock-123",
-  filename: "marketing-report-2024.pdf",
-  createdAt: new Date().toISOString(),
-  trustScore: 42,
-  summary: { verified: 5, inaccurate: 3, false: 4, total: 12 },
-  claims: [
-    {
-      id: "c1",
-      claim: "India GDP grew 12% in 2024",
-      status: "FALSE",
-      confidence: 91,
-      actualFact: "IMF data shows India GDP grew 6.8% in 2024",
-      explanation: "Marked FALSE because IMF and World Bank data contradict the 12% figure",
-      sources: [{ name: "IMF.org", url: "https://imf.org" }, { name: "World Bank", url: "https://worldbank.org" }]
-    },
-    {
-      id: "c2",
-      claim: "Global EV sales surpassed 10M in 2023",
-      status: "VERIFIED",
-      confidence: 97,
-      actualFact: "",
-      explanation: "Confirmed by IEA Global EV Outlook 2023",
-      sources: [{ name: "IEA.org", url: "https://iea.org" }]
-    },
-    {
-      id: "c3",
-      claim: "ChatGPT reached 100M users in 2 months",
-      status: "INACCURATE",
-      confidence: 84,
-      actualFact: "ChatGPT reached 100M users in Jan 2023, but now has 200M+ users as of 2024",
-      explanation: "The original milestone is real but the stat is outdated",
-      sources: [{ name: "Reuters", url: "https://reuters.com" }]
-    },
-    {
-      id: "c4",
-      claim: "Global inflation hit 18% in 2023",
-      status: "FALSE",
-      confidence: 95,
-      actualFact: "Global inflation was approximately 6.8% in 2023 per IMF",
-      explanation: "Marked FALSE because IMF data shows 6.8%, not 18%",
-      sources: [{ name: "IMF", url: "https://imf.org" }]
-    }
-  ]
-};
+import { getReport } from '../api/client';
 
 export default function ResultsPage() {
+  const { reportId } = useParams();
   const navigate = useNavigate();
   const [filter, setFilter] = useState('ALL');
+  const [report, setReport] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   
-  const report = MOCK_REPORT;
+  useEffect(() => {
+    const fetchReport = async () => {
+      try {
+        setLoading(true);
+        const data = await getReport(reportId);
+        setReport(data);
+      } catch (err) {
+        console.error('Error fetching report:', err);
+        setError('Failed to load report');
+      } finally {
+        setLoading(false);
+      }
+    };
+    if (reportId) {
+      fetchReport();
+    }
+  }, [reportId]);
   
-  const filteredClaims = report.claims.filter(c => filter === 'ALL' || c.status === filter);
+  if (loading) {
+    return (
+      <div className="p-6 max-w-5xl mx-auto flex flex-col gap-8 w-full mt-2 animate-pulse">
+        <div className="flex justify-between items-center">
+          <div className="flex flex-col gap-2">
+            <div className="h-6 w-48 bg-black/10 dark:bg-white/10 rounded-md"></div>
+            <div className="h-4 w-32 bg-black/10 dark:bg-white/10 rounded-md"></div>
+          </div>
+          <div className="flex gap-3">
+            <div className="h-9 w-24 bg-black/10 dark:bg-white/10 rounded-lg"></div>
+            <div className="h-9 w-32 bg-black/10 dark:bg-white/10 rounded-lg"></div>
+          </div>
+        </div>
+        
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {[1, 2, 3, 4].map(i => (
+            <div key={i} className="h-24 bg-black/10 dark:bg-white/10 rounded-xl"></div>
+          ))}
+        </div>
+        
+        <div className="flex flex-col gap-4 mt-4">
+          <div className="h-4 w-24 bg-black/10 dark:bg-white/10 rounded-md mb-2"></div>
+          {[1, 2, 3].map(i => (
+            <div key={i} className="h-32 bg-black/10 dark:bg-white/10 rounded-xl"></div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+  
+  if (error || !report) {
+    return (
+      <div className="p-6 max-w-3xl mx-auto flex flex-col items-center justify-center gap-6 w-full mt-20 text-center">
+        <div className="w-16 h-16 rounded-full bg-[#FCEBEB] dark:bg-[#A32D2D]/20 flex items-center justify-center mb-2">
+          <span className="text-2xl">📄</span>
+        </div>
+        <h2 className="text-2xl font-semibold text-[#1A1A1A] dark:text-[#F0F0F0]">Report Not Found</h2>
+        <p className="text-[#6B6B6B] dark:text-[#9A9A9A] max-w-md">
+          The report you are looking for does not exist or may have been deleted. It might be an old link or an invalid ID.
+        </p>
+        <div className="flex gap-4 mt-4">
+          <button 
+            onClick={() => navigate('/')}
+            className="px-6 py-2.5 bg-[#178BFF] hover:bg-[#0F7AE8] text-white text-sm font-medium rounded-lg transition-colors"
+          >
+            Go to Upload
+          </button>
+          <button 
+            onClick={() => navigate('/history')}
+            className="px-6 py-2.5 border border-black/10 dark:border-white/10 text-sm font-medium rounded-lg text-[#1A1A1A] dark:text-[#F0F0F0] hover:bg-[#F5F5F3] dark:hover:bg-[#1A1A1A] transition-colors"
+          >
+            View History
+          </button>
+        </div>
+      </div>
+    );
+  }
+  
+  const filteredClaims = (report.claims || []).filter(c => filter === 'ALL' || c.status === filter);
   
   const formatDate = (isoString) => {
     return new Date(isoString).toLocaleDateString('en-US', {

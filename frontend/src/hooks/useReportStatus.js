@@ -1,47 +1,34 @@
 import { useState, useEffect } from 'react';
-
-const MOCK_STEPS = ['parsing', 'extracting', 'searching', 'verifying', 'building', 'complete'];
+import { getReportStatus } from '../api/client';
 
 export function useReportStatus(reportId) {
-  const [currentStepIndex, setCurrentStepIndex] = useState(0);
-  const [searchProgress, setSearchProgress] = useState({ done: 0, total: 12 });
+  const [currentStep, setCurrentStep] = useState('parsing');
+  const [searchProgress, setSearchProgress] = useState({ done: 0, total: 0 });
   const [status, setStatus] = useState('processing');
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (status === 'complete') return;
+    if (status === 'complete' || status === 'error') return;
 
-    const interval = setInterval(() => {
-      setCurrentStepIndex((prev) => {
-        const next = prev + 1;
-        if (next >= MOCK_STEPS.length - 1) {
-          setStatus('complete');
-          return MOCK_STEPS.length - 1;
-        }
-        return next;
-      });
-    }, 3000);
+    const interval = setInterval(async () => {
+      try {
+        const data = await getReportStatus(reportId);
+        if (data.currentStep) setCurrentStep(data.currentStep);
+        if (data.status) setStatus(data.status);
+        if (data.progress) setSearchProgress(data.progress);
+      } catch (err) {
+        console.error('Error polling status:', err);
+        setError(err);
+      }
+    }, 2000);
 
     return () => clearInterval(interval);
-  }, [status]);
-
-  useEffect(() => {
-    if (MOCK_STEPS[currentStepIndex] === 'searching') {
-      const searchInterval = setInterval(() => {
-        setSearchProgress(prev => {
-          if (prev.done >= prev.total) {
-            clearInterval(searchInterval);
-            return prev;
-          }
-          return { ...prev, done: prev.done + 1 };
-        });
-      }, 250); 
-      return () => clearInterval(searchInterval);
-    }
-  }, [currentStepIndex]);
+  }, [reportId, status]);
 
   return {
-    currentStep: MOCK_STEPS[currentStepIndex],
+    currentStep,
     searchProgress,
-    status
+    status,
+    error
   };
 }

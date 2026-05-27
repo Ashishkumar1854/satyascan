@@ -1,35 +1,31 @@
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FileText, Inbox, Upload } from 'lucide-react';
 import StatusBadge from '../components/StatusBadge';
 import { formatDate } from '../utils/date';
-
-const MOCK_HISTORY = [
-  {
-    id: "mock-123",
-    filename: "marketing-report-2024.pdf",
-    createdAt: new Date().toISOString(),
-    trustScore: 42,
-    summary: { verified: 5, inaccurate: 3, false: 4, total: 12 }
-  },
-  {
-    id: "mock-456",
-    filename: "q3-investor-deck.pdf",
-    createdAt: new Date(Date.now() - 86400000).toISOString(),
-    trustScore: 87,
-    summary: { verified: 7, inaccurate: 1, false: 0, total: 8 }
-  },
-  {
-    id: "mock-789",
-    filename: "whitepaper-ai-trends.pdf",
-    createdAt: new Date(Date.now() - 172800000).toISOString(),
-    trustScore: 61,
-    summary: { verified: 6, inaccurate: 5, false: 4, total: 15 }
-  }
-];
+import { getAllReports } from '../api/client';
 
 export default function HistoryPage() {
   const navigate = useNavigate();
-  const history = MOCK_HISTORY;
+  const [history, setHistory] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchHistory = async () => {
+      try {
+        setLoading(true);
+        const data = await getAllReports();
+        setHistory(data);
+      } catch (err) {
+        console.error('Error fetching history:', err);
+        setError('Failed to load history');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchHistory();
+  }, []);
 
   const getWorstStatus = (summary) => {
     if (summary.false > 0) return { status: 'FALSE', count: summary.false };

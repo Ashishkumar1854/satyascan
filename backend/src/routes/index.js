@@ -18,8 +18,10 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 router.post('/upload', upload.single('file'), uploadController.upload);
+router.get('/ping', (req, res) => res.send('pong'));
 router.get('/report/:id', reportController.getReport);
 router.get('/report/:id/status', reportController.getStatus);
+router.post('/report/:id/status', reportController.updateStatus);
 router.get('/reports', reportController.getAllReports);
 
 module.exports = router;

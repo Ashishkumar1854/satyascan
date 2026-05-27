@@ -13,7 +13,7 @@ def extract_claims(text: str) -> list[dict]:
             
         prompt = prompt_template.replace("{text}", text)
         
-        model = genai.GenerativeModel('gemini-1.5-flash', generation_config={"response_mime_type": "application/json"})
+        model = genai.GenerativeModel('gemini-2.5-flash', generation_config={"response_mime_type": "application/json"})
         response = model.generate_content(prompt)
         
         result = json.loads(response.text)

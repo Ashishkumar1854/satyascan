@@ -1,9 +1,10 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import { ShieldCheck, Upload, FileText, Clock, Moon, Sun } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 export default function Sidebar() {
   const [isDark, setIsDark] = useState(false);
+  const location = useLocation();
 
   useEffect(() => {
     if (isDark) {
@@ -24,7 +25,7 @@ export default function Sidebar() {
     <div className="w-[180px] h-full flex flex-col bg-[#F5F5F3] dark:bg-[#0F0F0F] border-r border-black/10 dark:border-white/10 p-4 shrink-0">
       <div className="flex items-center gap-2 mb-8 text-[#1A1A1A] dark:text-[#F0F0F0]">
         <ShieldCheck className="text-[#178BFF]" size={24} />
-        <span className="font-medium text-[15px]">TruthLayer</span>
+        <span className="font-medium text-[15px]">SatyaScan</span>
       </div>
 
       <nav className="flex flex-col gap-1 flex-1">
@@ -32,7 +33,16 @@ export default function Sidebar() {
           <Upload size={16} />
           Upload
         </NavLink>
-        <NavLink to="/results/mock-123" className={navLinkClass}>
+        <NavLink 
+          to={location.pathname.startsWith('/results/') || location.pathname.startsWith('/processing/') ? location.pathname : '/history'} 
+          className={({ isActive }) => 
+            `flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium cursor-pointer transition-colors ${
+              location.pathname.startsWith('/results/') || location.pathname.startsWith('/processing/')
+                ? 'bg-[#EBEBEB] dark:bg-[#252525] text-[#1A1A1A] dark:text-[#F0F0F0]'
+                : 'text-[#6B6B6B] dark:text-[#9A9A9A] hover:bg-[#EBEBEB] dark:hover:bg-[#252525]'
+            }`
+          }
+        >
           <FileText size={16} />
           Results
         </NavLink>

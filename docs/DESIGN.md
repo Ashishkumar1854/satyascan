@@ -1,11 +1,11 @@
-# TruthLayer — Design Reference
+# SatyaScan — Design Reference
 > Antigravity must read this file at the START of every phase before writing any UI code.
 
 ---
 
 ## App Identity
 
-- **Product name:** TruthLayer
+- **Product name:** SatyaScan
 - **Tagline:** AI-powered fact-checking for marketing content
 - **Logo icon:** Shield with checkmark (use lucide-react: `ShieldCheck`)
 - **Primary accent:** Blue (`#178BFF` light / `#60AFFF` dark)

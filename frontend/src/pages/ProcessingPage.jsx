@@ -13,11 +13,13 @@ const STEP_PERCENTAGES = {
   complete: 100
 };
 
+import { AlertCircle } from 'lucide-react';
+
 export default function ProcessingPage() {
   const { reportId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const { currentStep, searchProgress, status } = useReportStatus(reportId);
+  const { currentStep, searchProgress, status, error } = useReportStatus(reportId);
 
   const filename = location.state?.filename || 'document.pdf';
   const fileSize = location.state?.fileSize || null;
@@ -30,6 +32,23 @@ export default function ProcessingPage() {
       return () => clearTimeout(timer);
     }
   }, [status, navigate, reportId]);
+
+  if (status === 'error' || error) {
+    return (
+      <div className="p-6 max-w-3xl mx-auto flex flex-col items-center justify-center h-[50vh] text-center gap-4 mt-4">
+        <div className="w-16 h-16 rounded-full bg-[#FCEBEB] text-[#A32D2D] flex items-center justify-center">
+          <AlertCircle size={32} />
+        </div>
+        <p className="text-lg font-medium text-[#1A1A1A] dark:text-[#F0F0F0]">Analysis failed. Please try again.</p>
+        <button
+          onClick={() => navigate('/')}
+          className="px-4 py-2 bg-[#178BFF] hover:bg-[#0F7AE8] text-white text-sm font-medium rounded-lg transition-colors mt-2"
+        >
+          Go Back
+        </button>
+      </div>
+    );
+  }
 
   const formatFileSize = (bytes) => {
     if (!bytes) return '';
