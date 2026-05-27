@@ -1,39 +1,37 @@
 import os
 import json
+import re
 from google import genai
-from google.genai import types
 from dotenv import load_dotenv
 
 load_dotenv()
-client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+client = genai.Client(api_key=os.environ.get("GEMINI_API_KEY"))
 
-def extract_claims(text: str) -> list[dict]:
+def extract_claims(text: str) -> list:
     try:
-        with open("app/prompts/extract_claims.txt", "r") as f:
-            prompt_template = f.read()
-            
-        prompt = prompt_template.replace("{text}", text)
+        prompt = f"""Extract factual claims from this text that contain numbers, 
+        percentages, statistics, dates, or technical facts.
+        Return ONLY a JSON array like: [{{"claim": "claim text here"}}]
+        No explanation, no markdown, just the JSON array.
+        
+        Text: {text[:3000]}"""
         
         response = client.models.generate_content(
-            model='gemini-1.5-flash',
-            contents=prompt,
-            config=types.GenerateContentConfig(
-                response_mime_type="application/json",
-            )
+            model="gemini-1.5-flash",
+            contents=prompt
         )
         
-        print(f"Gemini raw response text: {response.text}")
+        raw = response.text
+        print(f"GEMINI RAW RESPONSE: {raw}")
         
-        result = json.loads(response.text)
-        if isinstance(result, list):
-            print(f"Extracted {len(result)} claims.")
-            return result
-        elif isinstance(result, dict) and "claims" in result:
-            print(f"Extracted {len(result['claims'])} claims.")
-            return result["claims"]
-        else:
-            print("Warning: Gemini returned an unexpected JSON structure.")
-            return []
+        # Clean markdown if present
+        raw = raw.strip()
+        if raw.startswith("```"):
+            raw = re.sub(r"```json|```", "", raw).strip()
+        
+        claims = json.loads(raw)
+        print(f"CLAIMS PARSED: {len(claims)}")
+        return claims
     except Exception as e:
         print(f"Error extracting claims: {e}")
         return []
