@@ -6,10 +6,12 @@ from app.services.pdf_extractor import extract_text
 from app.services.claim_extractor import extract_claims
 from app.services.verifier import verify_claim
 
+import base64
+
 router = APIRouter()
 
 class AnalyzeRequest(BaseModel):
-    filePath: str
+    fileData: str
     reportId: Optional[str] = None
     callback_url: Optional[str] = None
 
@@ -29,8 +31,11 @@ def analyze(request: AnalyzeRequest):
     try:
         cb = request.callback_url
         
+        print("=== ANALYZE ENDPOINT CALLED ===")
         notify_progress(cb, "parsing")
-        text = extract_text(request.filePath)
+        
+        pdf_bytes = base64.b64decode(request.fileData)
+        text = extract_text(pdf_bytes)
         print(f"Analyze: extracted text length {len(text)}")
         
         notify_progress(cb, "extracting")

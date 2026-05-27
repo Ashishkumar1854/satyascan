@@ -8,12 +8,21 @@ exports.analyzeInBackground = async (reportId, filePath) => {
     const backendUrl = process.env.BACKEND_URL || `http://localhost:${backendPort}`;
     const callbackUrl = `${backendUrl}/api/report/${reportId}/status`;
     
+    const fs = require('fs');
+    console.log("Calling AI service at:", aiServiceUrl);
+    
+    // Read the file and convert to base64 to send across servers
+    const fileBuffer = fs.readFileSync(filePath);
+    const fileBase64 = fileBuffer.toString('base64');
+    
     // POST to AI service
     const response = await axios.post(`${aiServiceUrl}/analyze`, { 
-      filePath, 
+      fileData: fileBase64, 
       reportId: reportId.toString(),
       callback_url: callbackUrl
     });
+    
+    console.log("AI service response:", JSON.stringify(response.data).substring(0, 200) + '...');
     
     const results = response.data;
     const claims = results.claims || [];

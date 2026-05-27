@@ -24,9 +24,10 @@ exports.upload = async (req, res) => {
     await report.save();
     console.log('Report saved with ID:', report._id);
 
+    console.log('Starting analysis for reportId:', report._id);
     // Call AI connector in background (fire and forget)
     aiConnector.analyzeInBackground(report._id, filePath);
-    console.log('Started analyzeInBackground');
+    console.log('Started analyzeInBackground for reportId:', report._id);
 
     res.status(202).json({ reportId: report._id });
     console.log('Sent response');
