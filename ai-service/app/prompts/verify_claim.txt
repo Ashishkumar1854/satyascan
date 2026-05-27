@@ -1,0 +1,19 @@
+You are a fact-checker. Given this claim and search evidence, determine its accuracy.
+
+Claim: {claim}
+
+Search evidence:
+{evidence}
+
+Return ONLY this JSON object. No explanation:
+{
+  "status": "VERIFIED" | "INACCURATE" | "FALSE",
+  "confidence": <number 0-100>,
+  "actualFact": "<corrected fact, or empty string if verified>",
+  "explanation": "<one sentence explaining why — mention the source that contradicts or confirms>"
+}
+
+Rules:
+- VERIFIED: evidence clearly confirms the claim
+- INACCURATE: claim was once true but is outdated, or numbers are slightly off
+- FALSE: evidence clearly contradicts the claim, or no credible evidence found
