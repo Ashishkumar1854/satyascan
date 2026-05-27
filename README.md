@@ -37,13 +37,12 @@ Marketing reports, research PDFs, and business documents often contain:
 Manually verifying them takes time.
 
 SatyaScan automates this process using AI + live web search.
+<img width="1428" height="789" alt="2 pdf" src="https://github.com/user-attachments/assets/4449d791-720c-4dc5-9dbf-a50e12efa819" />
+<img width="1433" height="815" alt="3 pdf" src="https://github.com/user-attachments/assets/a7079af1-14fb-4b70-80f0-60e87bba7be7" />
+<img width="1395" height="804" alt="4 pdf" src="https://github.com/user-attachments/assets/3f26add8-d1c3-4f68-9517-724407086f86" />
+<img width="1433" height="801" alt="5 pdf" src="https://github.com/user-attachments/assets/9e66a661-acaa-42ff-9967-0b6cbe2a4637" />
+<img width="1425" height="781" alt="1 pdf" src="https://github.com/user-attachments/assets/1e9a12bc-bcbe-47ad-a4a7-e7755ac7fa2a" />
 
----
-<img width="1440" height="900" alt="Screenshot 2026-05-27 at 11 07 55" src="https://github.com/user-attachments/assets/6a969126-88f7-4197-89a8-af6ca63a1eed" />
-<img width="1440" height="900" alt="Screenshot 2026-05-27 at 11 08 02" src="https://github.com/user-attachments/assets/1fc37617-6779-4eee-9edf-197d1bb8da40" />
-<img width="1440" height="900" alt="Screenshot 2026-05-27 at 11 08 11" src="https://github.com/user-attachments/assets/11fc3488-7e3f-45e9-86d3-0e7ddc2a9638" />
-<img width="1440" height="900" alt="Screenshot 2026-05-27 at 11 08 18" src="https://github.com/user-attachments/assets/76164c45-f347-4272-9f81-ca04cabd6922" />
-<img width="1440" height="900" alt="Screenshot 2026-05-27 at 11 07 40" src="https://github.com/user-attachments/assets/099f6bab-8709-44a2-ac85-b400dd521e3c" />
 
 # How It Works
 
