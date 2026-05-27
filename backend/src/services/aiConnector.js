@@ -5,7 +5,8 @@ exports.analyzeInBackground = async (reportId, filePath) => {
   try {
     const backendPort = process.env.PORT || 8899;
     const aiServiceUrl = process.env.AI_SERVICE_URL || 'http://localhost:8001';
-    const callbackUrl = `http://localhost:${backendPort}/api/report/${reportId}/status`;
+    const backendUrl = process.env.BACKEND_URL || `http://localhost:${backendPort}`;
+    const callbackUrl = `${backendUrl}/api/report/${reportId}/status`;
     
     // POST to AI service
     const response = await axios.post(`${aiServiceUrl}/analyze`, { 

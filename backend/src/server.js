@@ -9,7 +9,9 @@ dotenv.config();
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: ['https://satyascan-beta.vercel.app', 'http://localhost:5173']
+}));
 app.use(express.json());
 
 const uploadsDir = path.join(__dirname, '../uploads');

@@ -1,10 +1,11 @@
 import os
 import json
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 from dotenv import load_dotenv
 
 load_dotenv()
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 def extract_claims(text: str) -> list[dict]:
     try:
@@ -13,8 +14,13 @@ def extract_claims(text: str) -> list[dict]:
             
         prompt = prompt_template.replace("{text}", text)
         
-        model = genai.GenerativeModel('gemini-2.5-flash', generation_config={"response_mime_type": "application/json"})
-        response = model.generate_content(prompt)
+        response = client.models.generate_content(
+            model='gemini-2.5-flash',
+            contents=prompt,
+            config=types.GenerateContentConfig(
+                response_mime_type="application/json",
+            )
+        )
         
         result = json.loads(response.text)
         if isinstance(result, list):
