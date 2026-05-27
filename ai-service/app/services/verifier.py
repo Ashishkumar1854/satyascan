@@ -31,15 +31,19 @@ def verify_claim(claim: str) -> dict:
         prompt = prompt_template.replace("{claim}", claim).replace("{evidence}", evidence_text)
         
         response = client.models.generate_content(
-            model='gemini-2.5-flash',
+            model='gemini-1.5-flash',
             contents=prompt,
             config=types.GenerateContentConfig(
                 response_mime_type="application/json",
             )
         )
         
+        print(f"Verifier Gemini raw response: {response.text}")
+        
         result = json.loads(response.text)
         result["sources"] = sources
+        
+        print(f"Verifier result status: {result.get('status')}")
         
         return result
     except Exception as e:

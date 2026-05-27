@@ -31,9 +31,13 @@ def analyze(request: AnalyzeRequest):
         
         notify_progress(cb, "parsing")
         text = extract_text(request.filePath)
+        print(f"Analyze: extracted text length {len(text)}")
         
         notify_progress(cb, "extracting")
         claims_list = extract_claims(text)
+        print(f"Analyze: extracted claims {len(claims_list)}")
+        if not claims_list:
+            print("Analyze: WARNING - Claims list is empty!")
         
         verified_claims = []
         total = len(claims_list)

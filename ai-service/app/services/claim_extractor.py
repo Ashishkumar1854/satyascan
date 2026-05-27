@@ -15,19 +15,24 @@ def extract_claims(text: str) -> list[dict]:
         prompt = prompt_template.replace("{text}", text)
         
         response = client.models.generate_content(
-            model='gemini-2.5-flash',
+            model='gemini-1.5-flash',
             contents=prompt,
             config=types.GenerateContentConfig(
                 response_mime_type="application/json",
             )
         )
         
+        print(f"Gemini raw response text: {response.text}")
+        
         result = json.loads(response.text)
         if isinstance(result, list):
+            print(f"Extracted {len(result)} claims.")
             return result
         elif isinstance(result, dict) and "claims" in result:
+            print(f"Extracted {len(result['claims'])} claims.")
             return result["claims"]
         else:
+            print("Warning: Gemini returned an unexpected JSON structure.")
             return []
     except Exception as e:
         print(f"Error extracting claims: {e}")
