@@ -45,7 +45,7 @@ SatyaScan automates this process using AI + live web search.
 <img width="1440" height="900" alt="Screenshot 2026-05-27 at 11 08 18" src="https://github.com/user-attachments/assets/76164c45-f347-4272-9f81-ca04cabd6922" />
 <img width="1440" height="900" alt="Screenshot 2026-05-27 at 11 07 40" src="https://github.com/user-attachments/assets/099f6bab-8709-44a2-ac85-b400dd521e3c" />
 
-## How It Works
+# How It Works
 
 ```text
 PDF Upload
@@ -63,27 +63,40 @@ Tavily searches live web evidence
 Gemini verifies each claim
    ↓
 Fact-check report generated
+```
 
+---
 
-Features
-PDF upload support
-AI-powered claim extraction
-Live web verification
-Fact classification system
-Trust score generation
-Confidence scoring
-Source-based verification
-Modern responsive UI
-Tech Stack
-Layer	Technology
-Frontend	React + Vite + Tailwind CSS
-Backend	Node.js + Express
-AI Service	Python + FastAPI
-Database	MongoDB Atlas
-AI Model	Gemini 1.5 Flash
-Search Engine	Tavily API
-Deployment	Vercel + Render
-Project Architecture
+# Features
+
+- PDF upload support
+- AI-powered claim extraction
+- Live web verification
+- Fact classification system
+- Trust score generation
+- Confidence scoring
+- Source-based verification
+- Modern responsive UI
+
+---
+
+# Tech Stack
+
+| Layer | Technology |
+|-------|------------|
+| Frontend | React + Vite + Tailwind CSS |
+| Backend | Node.js + Express |
+| AI Service | Python + FastAPI |
+| Database | MongoDB Atlas |
+| AI Model | Gemini 1.5 Flash |
+| Search Engine | Tavily API |
+| Deployment | Vercel + Render |
+
+---
+
+# Project Architecture
+
+```text
 Frontend (React)
         ↓
 Backend API (Node.js)
@@ -91,43 +104,81 @@ Backend API (Node.js)
 AI Service (FastAPI)
         ↓
 Gemini + Tavily
-Installation
-1. Clone Repository
+```
+
+---
+
+# Installation
+
+## 1. Clone Repository
+
+```bash
 git clone https://github.com/Ashishkumar1854/satyascan.git
 
 cd satyascan
-2. Frontend Setup
+```
+
+---
+
+## 2. Frontend Setup
+
+```bash
 cd frontend
 
 npm install
 
 npm run dev
+```
 
 Frontend runs on:
 
+```text
 http://localhost:5173
-3. Backend Setup
+```
+
+---
+
+## 3. Backend Setup
+
+```bash
 cd backend
 
 npm install
 
 npm run dev
+```
 
 Backend runs on:
 
+```text
 http://localhost:3001
-4. AI Service Setup
+```
+
+---
+
+## 4. AI Service Setup
+
+```bash
 cd ai-service
 
 pip install -r requirements.txt
 
 uvicorn app.main:app --reload
+```
 
 AI Service runs on:
 
+```text
 http://localhost:8000
-Environment Variables
-Backend .env
+```
+
+---
+
+# Environment Variables
+
+## Backend `.env`
+
+```env
 PORT=3001
 
 MONGODB_URI=your_mongodb_uri
@@ -135,11 +186,23 @@ MONGODB_URI=your_mongodb_uri
 AI_SERVICE_URL=http://localhost:8000
 
 GEMINI_API_KEY=your_gemini_api_key
-AI Service .env
+```
+
+---
+
+## AI Service `.env`
+
+```env
 GEMINI_API_KEY=your_gemini_api_key
 
 TAVILY_API_KEY=your_tavily_api_key
-Requirements.txt
+```
+
+---
+
+# requirements.txt
+
+```txt
 fastapi
 uvicorn
 pymupdf
@@ -148,37 +211,90 @@ google-genai
 python-multipart
 python-dotenv
 tavily-python
-API Flow
-Upload PDF
+```
+
+---
+
+# API Flow
+
+## Upload PDF
+
+```http
 POST /api/upload
-Check Processing Status
+```
+
+## Check Processing Status
+
+```http
 GET /api/report/:id/status
-Get Final Report
+```
+
+## Get Final Report
+
+```http
 GET /api/report/:id
-Get Report History
+```
+
+## Get Report History
+
+```http
 GET /api/reports
-Example Output
+```
+
+---
+
+# Example Output
+
+```json
 {
   "claim": "India GDP grew 12% in 2024",
   "status": "FALSE",
   "confidence": 91,
   "actualFact": "IMF data shows India GDP grew 6.8% in 2024"
 }
-Gemini API Quota Notice
+```
+
+---
+
+# Gemini API Quota Notice
 
 This project currently uses the free tier of Google's Gemini API.
 
 During development and testing, multiple PDF uploads were used to debug and improve the verification pipeline, which exhausted the current daily quota.
 
 The application was successfully tested earlier and correctly:
-
-Extracted factual claims
-Detected fake statistics
-Verified real claims
-Generated trust reports
+- Extracted factual claims
+- Detected fake statistics
+- Verified real claims
+- Generated trust reports
 
 If the live app temporarily shows API quota errors, evaluators can:
+- Wait for the daily quota reset
+- Check the demo video linked above
+- Review the source code and architecture
 
-Wait for the daily quota reset
-Check the demo video linked above
-Review the source code and architecture
+---
+
+# Folder Structure
+
+```text
+satyascan/
+│
+├── frontend/
+├── backend/
+├── ai-service/
+├── docs/
+└── README.md
+```
+
+---
+
+# Future Improvements
+
+- OCR support for scanned PDFs
+- Multi-language verification
+- Citation highlighting inside PDFs
+- User authentication
+- PDF report export
+- Batch document processing
+
