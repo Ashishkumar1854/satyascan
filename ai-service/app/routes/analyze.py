@@ -7,6 +7,7 @@ from app.services.claim_extractor import extract_claims
 from app.services.verifier import verify_claim
 
 import base64
+import time
 
 router = APIRouter()
 
@@ -53,6 +54,9 @@ def analyze(request: AnalyzeRequest):
             claim_text = item.get("claim")
             if not claim_text:
                 continue
+                
+            print(f"Sleeping 10s before verifying: {claim_text[:30]}...")
+            time.sleep(10)
                 
             verification_result = verify_claim(claim_text)
             status = verification_result.get("status", "FALSE")
