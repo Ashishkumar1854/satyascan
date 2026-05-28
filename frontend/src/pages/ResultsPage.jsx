@@ -180,7 +180,9 @@ export default function ResultsPage() {
             ))
           ) : (
             <div className="py-8 text-center text-[#6B6B6B] dark:text-[#9A9A9A] text-sm">
-              No claims found for this filter.
+              {report.summary.total === 0 && filter === 'ALL' 
+                ? "No claims found. If your document contains factual claims, your API Key limits may be exceeded or invalid. Please check your API dashboard." 
+                : "No claims found for this filter."}
             </div>
           )}
         </div>

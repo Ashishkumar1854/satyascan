@@ -23,5 +23,6 @@ router.get('/report/:id', reportController.getReport);
 router.get('/report/:id/status', reportController.getStatus);
 router.post('/report/:id/status', reportController.updateStatus);
 router.get('/reports', reportController.getAllReports);
+router.delete('/report/:id', reportController.deleteReport);
 
 module.exports = router;

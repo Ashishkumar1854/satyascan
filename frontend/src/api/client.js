@@ -30,3 +30,8 @@ export const getAllReports = async () => {
   const response = await api.get('/reports');
   return response.data;
 };
+
+export const deleteReport = async (id) => {
+  const response = await api.delete(`/report/${id}`);
+  return response.data;
+};

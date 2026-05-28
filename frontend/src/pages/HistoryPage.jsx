@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FileText, Inbox, Upload } from 'lucide-react';
+import { FileText, Inbox, Upload, X } from 'lucide-react';
 import StatusBadge from '../components/StatusBadge';
 import { formatDate } from '../utils/date';
-import { getAllReports } from '../api/client';
+import { getAllReports, deleteReport } from '../api/client';
 
 export default function HistoryPage() {
   const navigate = useNavigate();
@@ -26,6 +26,16 @@ export default function HistoryPage() {
     };
     fetchHistory();
   }, []);
+
+  const handleDelete = async (e, id) => {
+    e.stopPropagation();
+    try {
+      await deleteReport(id);
+      setHistory(prev => prev.filter(report => report.id !== id));
+    } catch (err) {
+      console.error('Error deleting report:', err);
+    }
+  };
 
   const getWorstStatus = (summary) => {
     if (summary.false > 0) return { status: 'FALSE', count: summary.false };
@@ -89,6 +99,13 @@ export default function HistoryPage() {
                 <div className="flex items-center gap-2 shrink-0">
                   <span className="text-xs font-medium text-[#6B6B6B] dark:text-[#9A9A9A]">{worst.count}</span>
                   <StatusBadge status={worst.status} />
+                  <button 
+                    onClick={(e) => handleDelete(e, report.id)}
+                    className="ml-2 p-1.5 text-[#6B6B6B] hover:text-[#A32D2D] hover:bg-[#FCEBEB] dark:hover:bg-[#A32D2D]/20 rounded-full transition-colors"
+                    title="Delete report"
+                  >
+                    <X size={16} />
+                  </button>
                 </div>
               </div>
             );
