@@ -1,11 +1,11 @@
 import os
 import json
 import re
-from google import genai
+from openai import OpenAI
 from dotenv import load_dotenv
 
 load_dotenv()
-client = genai.Client(api_key=os.environ.get("GEMINI_API_KEY"))
+client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
 def extract_claims(text: str) -> list:
     try:
@@ -16,13 +16,13 @@ def extract_claims(text: str) -> list:
         
         Text: {text[:3000]}"""
         
-        response = client.models.generate_content(
-            model="gemini-1.5-flash",
-            contents=prompt
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[{"role": "user", "content": prompt}],
         )
         
-        raw = response.text
-        print(f"GEMINI RAW RESPONSE: {raw}")
+        raw = response.choices[0].message.content
+        print(f"OPENAI RAW RESPONSE: {raw}")
         
         # Clean markdown if present
         raw = raw.strip()

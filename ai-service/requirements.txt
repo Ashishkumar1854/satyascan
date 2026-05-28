@@ -2,7 +2,7 @@ fastapi
 uvicorn
 pymupdf
 requests
-google-genai
+openai
 python-multipart
 python-dotenv
 tavily-python

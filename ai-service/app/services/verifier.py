@@ -1,12 +1,11 @@
 import os
 import json
-from google import genai
-from google.genai import types
+from openai import OpenAI
 from tavily import TavilyClient
 from dotenv import load_dotenv
 
 load_dotenv()
-client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 tavily_client = TavilyClient(api_key=os.getenv("TAVILY_API_KEY"))
 
 def verify_claim(claim: str) -> dict:
@@ -30,17 +29,18 @@ def verify_claim(claim: str) -> dict:
             
         prompt = prompt_template.replace("{claim}", claim).replace("{evidence}", evidence_text)
         
-        response = client.models.generate_content(
-            model='gemini-1.5-flash',
-            contents=prompt,
-            config=types.GenerateContentConfig(
-                response_mime_type="application/json",
-            )
+        # Add instruction to ensure JSON output
+        prompt += "\nReturn your response as a valid JSON object."
+        
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[{"role": "user", "content": prompt}],
+            response_format={"type": "json_object"}
         )
         
-        print(f"Verifier Gemini raw response: {response.text}")
+        print(f"Verifier OpenAI raw response: {response.choices[0].message.content}")
         
-        result = json.loads(response.text)
+        result = json.loads(response.choices[0].message.content)
         result["sources"] = sources
         
         print(f"Verifier result status: {result.get('status')}")
