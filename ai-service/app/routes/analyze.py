@@ -55,8 +55,8 @@ def analyze(request: AnalyzeRequest):
             if not claim_text:
                 continue
                 
-            print(f"Sleeping 10s before verifying: {claim_text[:30]}...")
-            time.sleep(10)
+            print(f"Sleeping 4s before verifying: {claim_text[:30]}...")
+            time.sleep(4)
                 
             verification_result = verify_claim(claim_text)
             status = verification_result.get("status", "FALSE")

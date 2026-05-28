@@ -20,6 +20,8 @@ exports.analyzeInBackground = async (reportId, filePath) => {
       fileData: fileBase64, 
       reportId: reportId.toString(),
       callback_url: callbackUrl
+    }, {
+      timeout: 300000 // 5 minutes timeout to prevent connection drop during long AI processing
     });
     
     console.log("AI service response:", JSON.stringify(response.data).substring(0, 200) + '...');
