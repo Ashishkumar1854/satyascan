@@ -1,11 +1,7 @@
 import os
 import json
 import re
-from openai import OpenAI
-from dotenv import load_dotenv
-
-load_dotenv()
-client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+from app.services.openai_client import call_with_fallback
 
 def extract_claims(text: str) -> list:
     try:
@@ -16,10 +12,13 @@ def extract_claims(text: str) -> list:
         
         Text: {text[:3000]}"""
         
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[{"role": "user", "content": prompt}],
-        )
+        def _api_call(client):
+            return client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[{"role": "user", "content": prompt}],
+            )
+            
+        response = call_with_fallback(_api_call)
         
         raw = response.choices[0].message.content
         print(f"OPENAI RAW RESPONSE: {raw}")

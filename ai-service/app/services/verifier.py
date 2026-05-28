@@ -1,11 +1,10 @@
 import os
 import json
-from openai import OpenAI
 from tavily import TavilyClient
 from dotenv import load_dotenv
+from app.services.openai_client import call_with_fallback
 
 load_dotenv()
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 tavily_client = TavilyClient(api_key=os.getenv("TAVILY_API_KEY"))
 
 def verify_claim(claim: str) -> dict:
@@ -32,11 +31,14 @@ def verify_claim(claim: str) -> dict:
         # Add instruction to ensure JSON output
         prompt += "\nReturn your response as a valid JSON object."
         
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[{"role": "user", "content": prompt}],
-            response_format={"type": "json_object"}
-        )
+        def _api_call(client):
+            return client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[{"role": "user", "content": prompt}],
+                response_format={"type": "json_object"}
+            )
+            
+        response = call_with_fallback(_api_call)
         
         print(f"Verifier OpenAI raw response: {response.choices[0].message.content}")
         
